@@ -14,6 +14,7 @@ public with sharing class HandlerFindContact implements BotHandler {
             List<BotField> fields = new List<BotField>();
             fields.add(new BotField('Name', c.Name, '#/sObject/' + c.Id + '/view'));
             fields.add(new BotField('Phone', c.MobilePhone, 'tel:' + c.MobilePhone));
+            fields.add(new BotField('Contact Id', c.Id));
             records.add(new BotRecord(fields));
         }
         return new BotResponse(new BotMessage('Bot', 'Here is a list of contacts matching "' + params[0] + '":', records));
