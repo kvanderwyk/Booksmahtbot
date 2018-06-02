@@ -2,9 +2,12 @@ public with sharing class HandlerMyOpenCases implements BotHandler {
     
     public BotResponse handle(String utterance, String[] params, Map<String, String> session) {
         
-        List<Case> cases = 
-            [SELECT Id, CaseNumber, Subject, Status, Priority, Contact.Id, Contact.Name 
-             FROM Case WHERE OwnerId =:UserInfo.getUserId() AND Status != 'Closed'];
+        List<Case> cases = [
+            SELECT Id, CaseNumber, Subject, Status, Priority, Contact.Id, Contact.Name
+            FROM Case
+            WHERE OwnerId =:UserInfo.getUserId()
+            AND Status != 'Closed'
+        ];
         
         List<BotRecord> records = new List<BotRecord>();
         

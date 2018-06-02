@@ -4,10 +4,10 @@ public with sharing class HandlerFindShipment implements BotHandler {
         
         String key = '%' + params[0] + '%';
         List<Shipment__c> shipments = [
-            SELECT Id, Name, Location__c, Status__c, Place_On_Hold__c FROM Shipment__c
+            SELECT Id, Name, Location__c, Status__c, Place_On_Hold__c, Contact__r.Id FROM Shipment__c
             WHERE Name LIKE :key
+            AND Contact__r.Id =: UserInfo.getUserId()
             ORDER BY Name
-            LIMIT 5
         ];
         
         List<BotRecord> records = new List<BotRecord>();
