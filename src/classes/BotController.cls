@@ -1,4 +1,7 @@
 public with sharing class BotController {
+    
+    static String OUR_CUSTOMERS_ACCOUNT_ID = '001f200001XrwpdAAB';
+    static String CASE_RECTYPEID_HELP_REQUEST = '012f2000000MhTUAA0';
 
     class HandlerMapping {
         
@@ -40,7 +43,7 @@ public with sharing class BotController {
             records.add(new BotRecord(fields));
 	        return new BotResponse(new BotMessage('Bot', 'Your file was uploaded successfully', records));
         } catch (Exception e) {
-			return new BotResponse(new BotMessage('Bot', 'An error occured while uploading the file'));            
+			return new BotResponse(new BotMessage('Bot', 'An error occurred while uploading the file'));
         }
     }    
     
@@ -71,7 +74,27 @@ public with sharing class BotController {
                 }
             }
             
-            return new BotResponse(new BotMessage('Bot', 'I don\'t know how to answer that'));
+            User currentUser = [
+                SELECT ContactId
+                FROM User
+                WHERE Id = :UserInfo.getUserId()
+            ];
+            
+            // TODO: If negative sentiment analysis, create different record type
+            Case newCase = new Case(
+                RecordTypeId = CASE_RECTYPEID_HELP_REQUEST,
+                Priority = 'High',
+                Origin = 'Community',
+                Status = 'New',
+                Reason = 'Other',
+                Subject = 'Trouble with Account: Issue',
+                Description = utterance,
+                ContactId = currentUser.ContactId,
+                AccountId = OUR_CUSTOMERS_ACCOUNT_ID
+            );
+            insert(newCase);
+    
+            return new BotResponse(new BotMessage('Bot', 'I don\'t know how to answer that, but I\'ve created a Support Case for your query and someone from our fantastic customer service team should get back to you shortly! You can see the status of your case by typing \'My Open Cases\''));
             
         } catch (Exception e) {
             System.debug(e);                
